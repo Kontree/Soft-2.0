@@ -3,3 +3,5 @@ venv/
 config.py
 .env
 __pycache__/
+drop_images/
+testing.py
