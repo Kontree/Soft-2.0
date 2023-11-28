@@ -1,7 +1,10 @@
 import discord
+import os
 from dotenv import load_dotenv
+
+
 load_dotenv()
-from config import BOT_TOKEN
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 
 intents = discord.Intents.default()
