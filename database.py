@@ -24,10 +24,27 @@ class DatabaseCon:
         self.connection.close()
         self.connection = None
 
-    def save_image(self, created_at, guild_id, channel_id, image_url):
+    def get_cursor(self):
         if not self.connection:
             self.connect()
-        cursor = self.connection.cursor()
+        return self.connection.cursor()
+
+    def get_objects(self, select_query):
+        cursor = self.get_cursor()
+        cursor.execute(select_query)
+        return cursor.fetchall()
+
+    def get_users(self):
+        return self.get_objects(f'SELECT * FROM users')
+
+    def get_images(self):
+        return self.get_objects(f"SELECT * FROM drops")
+
+    def get_user_keywords(self, user_id):
+        return self.get_objects(f"SELECT key_string FROM keywords WHERE user_id = '{user_id}'")
+
+    def save_image(self, created_at, guild_id, channel_id, image_url):
+        cursor = self.get_cursor()
         cursor.execute(f'''
         INSERT INTO drops (created_at, guild_id, channel_id, image_url) 
         VALUES('{created_at}', '{guild_id}', '{channel_id}', '{image_url}')
