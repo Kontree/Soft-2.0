@@ -15,7 +15,7 @@ cursor = conn.cursor()
 cursor.execute('''
                CREATE TABLE IF NOT EXISTS users (
                    id serial primary key,
-                   discord_id varchar(30),
+                   discord_id varchar(30) unique,
                    username varchar(50)
                );
                CREATE TABLE IF NOT EXISTS keywords (
@@ -31,10 +31,5 @@ cursor.execute('''
                    image_url varchar(100)
                );''')
 
-# cursor.execute('DROP TABLE users CASCADE')
-# cursor.execute('DROP TABLE drops')
-# cursor.execute('DROP TABLE keywords')
 conn.commit()
 
-# cursor.execute('SELECT * FROM users')
-# print(cursor.fetchall())
