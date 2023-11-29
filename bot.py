@@ -30,13 +30,13 @@ async def on_ready():
 async def on_message(message):
     if message.author.name == client.user.name:
         return
-
     if client.user in message.mentions and 'help' in message.content.lower():
         help_message = 'Hi there! I have a list of commands you could use:\n' \
                        '/register - registers you in the my memory\n' \
                        '/new_keyword <keyword> - creates a new keyword I\'ll love to ' \
                        'notice for you in the drops! Remember that <keyword> actually could be a list of words\n' \
                        '/delete_keyword <keyword> - same as command above, only that I forget it for you:('
+        await message.reply(help_message)
 
     if message.content == '/register':
         try:
