@@ -60,8 +60,11 @@ async def on_message(message):
     if message.content.startswith('/delete_keyword'):
         keyword = ' '.join(list(map(lambda x: x.lower().strip(), message.content.split()[1:])))
         try:
-            db.delete_keyword(message.author.id, keyword)
-            reply_message = f'Keyword "{keyword}" was successfully deleted!'
+            result = db.delete_keyword(message.author.id, keyword)
+            if result:
+                reply_message = f'Keyword "{keyword}" was successfully deleted!'
+            else:
+                reply_message = f'Keyword you specified is either not yours or is missing!'
         except:
             reply_message = 'Something went wrong, please get in touch with bot creator:('
         await message.reply(reply_message)

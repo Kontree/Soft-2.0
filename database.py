@@ -39,6 +39,13 @@ class DatabaseCon:
         cursor.execute(insert_query)
         self.close()
 
+    def delete_object(self, delete_query):
+        cursor = self.get_cursor()
+        cursor.execute(delete_query)
+        result = cursor.fetchone()
+        self.close()
+        return result
+
     def get_user_id(self, discord_id):
         cursor = self.get_cursor()
         cursor.execute(f"SELECT id FROM users WHERE discord_id = '{discord_id}'")
@@ -68,9 +75,10 @@ class DatabaseCon:
 
     def delete_keyword(self, discord_id, keyword):
         user_id = self.get_user_id(discord_id)[0]
-        self.save_object(f'''
+        return self.delete_object(f'''
             DELETE FROM keywords  
-            WHERE user_id = '{user_id}' AND key_string = '{keyword}'
+            WHERE user_id = '{user_id}' AND key_string = '{keyword}' 
+            RETURNING *
         ''')
 
     def save_image(self, created_at, guild_id, channel_id, image_url):
