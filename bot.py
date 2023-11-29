@@ -2,6 +2,7 @@ import discord
 import os
 import cv2
 import pytesseract
+from psycopg2.errors import UniqueViolation
 from dotenv import load_dotenv
 from database import DatabaseCon
 
@@ -29,6 +30,41 @@ async def on_ready():
 async def on_message(message):
     if message.author.name == client.user.name:
         return
+
+    if client.user in message.mentions and 'help' in message.content.lower():
+        help_message = 'Hi there! I have a list of commands you could use:\n' \
+                       '/register - registers you in the my memory\n' \
+                       '/new_keyword <keyword> - creates a new keyword I\'ll love to ' \
+                       'notice for you in the drops! Remember that <keyword> actually could be a list of words\n' \
+                       '/delete_keyword <keyword> - same as command above, only that I forget it for you:('
+
+    if message.content == '/register':
+        try:
+            db.save_user(message.author.id, message.author.name)
+            reply_message = 'You have successfully registered!'
+        except UniqueViolation:
+            reply_message = 'Sorry, but it seems that you already have registered'
+        except:
+            reply_message = 'Something went wrong, please get in touch with bot creator:('
+        await message.reply(reply_message)
+
+    if message.content.startswith('/new_keyword'):
+        keyword = ' '.join(list(map(lambda x: x.lower().strip(), message.content.split()[1:])))
+        try:
+            db.save_keyword(message.author.id, keyword)
+            reply_message = f'Keyword "{keyword}" was successfully saved!'
+        except:
+            reply_message = 'Something went wrong, please get in touch with bot creator:('
+        await message.reply(reply_message)
+
+    if message.content.startswith('/delete_keyword'):
+        keyword = ' '.join(list(map(lambda x: x.lower().strip(), message.content.split()[1:])))
+        try:
+            db.delete_keyword(message.author.id, keyword)
+            reply_message = f'Keyword "{keyword}" was successfully deleted!'
+        except:
+            reply_message = 'Something went wrong, please get in touch with bot creator:('
+        await message.reply(reply_message)
 
     if "dropping" in message.content and 'cards' in message.content:
         created_at = str(message.created_at)[:23]
