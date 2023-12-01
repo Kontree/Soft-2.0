@@ -95,7 +95,11 @@ async def on_message(message):
                     string = f'Something went wrong while reading image'
                 strings.append(string)
                 with open(f'{img_path}{i}.txt', 'w') as f:
-                    f.write(string)
+                    try:
+                        f.write(string)
+                    except UnicodeEncodeError:
+                        ...
+
 
         found = False
         user_ids_to_mention = []
